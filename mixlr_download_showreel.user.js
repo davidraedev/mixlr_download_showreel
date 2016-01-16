@@ -1,30 +1,22 @@
 // ==UserScript==
 // @name         Mixlr Download Showreel
 // @namespace    mixlr_download_showreel
-// @version      0.1
 // @description  Add links to download Showreel broadcasts on Mixlr.
+// @homepageURL  https://github.com/daraeman/mixlr_download_showreel
 // @author       daraeman
-// @include      /^https?:\/\/mixlr\.com\/bird_rock\/showreel\/*/
+// @version      1.0
+// @date         2016-01-15
+// @include      /^https?:\/\/mixlr\.com\/\w+\/showreel\/*/
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js
+// @downloadURL  https://github.com/daraeman/mixlr_download_showreel/raw/master/mixlr_download_showreel.user.js
+// @updateURL    https://github.com/daraeman/mixlr_download_showreel/raw/master/mixlr_download_showreel.meta.js
 // @grant        none
 // ==/UserScript==
 
-function addLinks() {
-	for ( i = 0; i < broadcasts.length; i++ ) {
-		var el = jQuery( '.mixlr_player[data-broadcast_id="'+ broadcasts[i].id +'"]' );
-		el.find( '.player_header .social_links' ).append( '<li><a class="mixlr_download_showreel_download" href="'+ broadcasts[i].mp3 +'"></a></li>' );
-	}
-}
-
-function displayMessage( msg, error ) {
-	if ( error )
-		console.error( msg );
-	else
-		console.log( msg );
-}
+this.$ = this.jQuery = jQuery.noConflict( true );
 
 function addStyles() {
-	jQuery( 'head' ).append(
+	$( 'head' ).append(
 		'<style type="text/css">' +
 		'	.mixlr_download_showreel .mixlr_player .social_links .mixlr_download_showreel_download {' +
 		'		width: 1.500em;' +
@@ -60,14 +52,25 @@ function addStyles() {
 		'	}' +
 		'</style>'
 	);
-	jQuery( 'body' ).addClass( "mixlr_download_showreel" );
+	$( 'body' ).addClass( "mixlr_download_showreel" );
 }
 
-/* script logic */
-
-if ( broadcasts ) {
-	addStyles();
-	addLinks();
+function addLinks() {
+	for ( i = 0; i < broadcasts.length; i++ ) {
+		var el = $( '.mixlr_player[data-broadcast_id="'+ broadcasts[i].id +'"]' );
+		el.find( '.player_header .social_links' ).append( '<li><a class="mixlr_download_showreel_download" href="'+ broadcasts[i].streams.http.url +'" download="'+ broadcasts[i].user_slug +'_'+ broadcasts[i].title.replace( /[^\w]/g, '' ) +'.mp3"></a></li>' );
+	}
 }
-else
-	displayMessage( "Mixlr Download Showreel Error: broadcasts empty" );
+
+var try_number = 0;
+var max_tries = 1000;
+var last_id = broadcasts[ broadcasts.length - 1 ].id;
+var wait_for_mixlr_to_load_interval = setInterval(function(){
+	if ( $( '.mixlr_player[data-broadcast_id="'+ last_id +'"]' ).length ) {
+		addStyles();
+		addLinks();
+		clearInterval( wait_for_mixlr_to_load_interval );
+	}
+	if ( try_number++ > max_tries )
+		clearInterval( mixlr_load_interval );
+}, 250 );
