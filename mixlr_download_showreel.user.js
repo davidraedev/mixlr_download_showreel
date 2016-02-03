@@ -64,7 +64,7 @@ function addStyles() {
 function addLinks() {
 	for ( i = 0; i < broadcasts.length; i++ ) {
 		var el = $( '.mixlr_player[data-broadcast_id="'+ broadcasts[i].id +'"]' );
-		var social_links = el.find( '.player_header .social_links' )
+		var social_links = el.find( '.player_header .social_links' );
 		social_links.append( '<li><a class="mixlr_download_showreel_download" href="'+ broadcasts[i].streams.http.url +'" download="'+ broadcasts[i].user_slug +'_'+ broadcasts[i].title.replace( /[^\w]/g, '' ) +'.mp3"></a></li>' );
 		social_links.append( '<li><a class="mixlr_download_showreel_state"></a></li>' );
 	}
@@ -101,16 +101,10 @@ function addBottomNav() {
 }
 
 function getLinks( all ) {
-	console.log( "getLinks" )
-	console.log( "saved >>" )
-	console.log( saved )
 	var links = '';
 	for ( i = 0; i < broadcasts.length; i++ ) {
-		console.log( "id = "+ broadcasts[i].id )
-		if ( ! saved[ broadcasts[i].id ] || all ) {
-			console.log( "id not exist" )
+		if ( ! saved[ broadcasts[i].id ] || all )
 			links += broadcasts[i].streams.http.url +"\n";
-		}
 	}
 	return links || "All Links have already been downloaded";
 }
