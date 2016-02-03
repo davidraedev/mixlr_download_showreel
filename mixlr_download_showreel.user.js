@@ -4,10 +4,12 @@
 // @description  Add links to download Showreel broadcasts on Mixlr.
 // @homepageURL  https://github.com/daraeman/mixlr_download_showreel
 // @author       daraeman
-// @version      1.1
-// @date         2016-01-20
+// @version      1.2
+// @date         2016-02-03
 // @include      /^https?:\/\/mixlr\.com\/\w+\/showreel\/*/
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js
+// @downloadURL  https://github.com/daraeman/mixlr_download_showreel/raw/master/mixlr_download_showreel.user.js
+// @updateURL    https://github.com/daraeman/mixlr_download_showreel/raw/master/mixlr_download_showreel.meta.js
 // ==/UserScript==
 
 this.$ = this.jQuery = jQuery.noConflict( true );
@@ -78,6 +80,10 @@ function updateSavedView() {
 	});
 }
 
+function addBottomNav() {
+	$( '.big_wrapper .pagination' ).first().insertAfter( $( ".showreel-list" ) );
+}
+
 var saved_local_key = 'mixlr_download_showreel_save_state';
 var try_number = 0;
 var max_tries = 1000;
@@ -92,8 +98,9 @@ var wait_for_mixlr_to_load_interval = setInterval(function(){
 		addLinks();
 		addTriggers();
 		updateSavedView();
+		addBottomNav()
 		clearInterval( wait_for_mixlr_to_load_interval );
 	}
 	if ( try_number++ > max_tries )
-		clearInterval( mixlr_load_interval );
+		clearInterval( wait_for_mixlr_to_load_interval );
 }, 250 );
