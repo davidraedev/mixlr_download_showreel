@@ -4,7 +4,7 @@
 // @description  Add links to download Showreel broadcasts on Mixlr.
 // @homepageURL  https://github.com/daraeman/mixlr_download_showreel
 // @author       daraeman
-// @version      1.2
+// @version      1.3
 // @date         2016-02-03
 // @include      /^https?:\/\/mixlr\.com\/\w+\/showreel\/*/
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js
@@ -17,32 +17,48 @@ this.$ = this.jQuery = jQuery.noConflict( true );
 function addStyles() {
 	$( 'head' ).append(
 		'<style type="text/css">' +
-		'	.mixlr_download_showreel .mixlr_player .social_links .mixlr_download_showreel_download {' +
+		'	.mds .mixlr_player .social_links .mixlr_download_showreel_download {' +
 		'		color: rgb( 200,200,200 );' +
 		'		background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAMAAAC6V+0/AAAAV1BMVEUAAACkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSzvKEUAAAAHHRSTlMAAQUHCQoRGBkcHz9AUFZecYCVqLTK0dPp7ff5cWDvugAAAGlJREFUGNO1zckKwCAMBNDYfdfui/n/76xKDFZKbx1yGB7oAHyk0YhLjB2a/I3JiRzJOrFdFaPwetXBB6QPI43MaWCje7inQpbQu34UQBNbDjBQbz2inndfO8AwKrMX4arstTQUxgy95Qa+KRMWu5MJ+wAAAABJRU5ErkJggg==");' +
 		'		background-position: center center;' +
 		'		width: 20px;' +
 		'		height: 20px;' +
 		'	}' +
-		'	.mixlr_download_showreel .mixlr_player .social_links .mixlr_download_showreel_download:hover {' +
+		'	.mds .mixlr_player .social_links .mixlr_download_showreel_download:hover {' +
 		'		background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAMAAAC6V+0/AAAAV1BMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////+ORg7oAAAAHHRSTlMAAQUHCQoRGBkcHz9AUFZecYCVqLTK0dPp7ff5cWDvugAAAGlJREFUGNO1zckKwCAMBNDYfdfui/n/76xKDFZKbx1yGB7oAHyk0YhLjB2a/I3JiRzJOrFdFaPwetXBB6QPI43MaWCje7inQpbQu34UQBNbDjBQbz2inndfO8AwKrMX4arstTQUxgy95Qa+KRMWu5MJ+wAAAABJRU5ErkJggg==");' +
 		'	}' +
-		'	.mixlr_download_showreel .mixlr_player .social_links .mixlr_download_showreel_state {' +
+		'	.mds .mixlr_player .social_links .mixlr_download_showreel_state {' +
 		'		color: rgb( 200,200,200 );' +
 		'		background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAMAAAC6V+0/AAAA6lBMVEUAAACkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKQzxDvQAAAATXRSTlMAAQIDBQYHCQ8TFBUYGhwdHiAhIyQlJygpKi0xNTdBQkdKUFFVVlljZmlseH6Aj6Cipqitsre5vsXHyszOz9HT1dfZ2ubp7fHz9fn7/TY7Zi8AAADHSURBVBgZXcELO8JgAIbhZ1tFRYXImRxCy5nIKSSrtvf//x1f33bZ6r6JuY2W77caLimvHcqaXHgkSgP9+ypi1SJlhBWMwlAzfvLAnebcQFkZTwv7kkqcK9X14FA6oyvpujmW8eACu9Ijv9IVLI2kexdYnUhDxlIVKAe3DrAeShrxJj3ngEUH2IxkvHIp6SWHtR1pqsOWjPc8xo5iGzgDGf0C7Cn2Caxo6rt4oEQN41QzjrBOlHFMotJX4mOZVN3vBUHPX8P6A0whSSzOxThUAAAAAElFTkSuQmCC");' +
 		'		background-position: center center;' +
 		'		width: 20px;' +
 		'		height: 20px;' +
 		'	}' +
-		'	.mixlr_download_showreel .mixlr_player .social_links .mixlr_download_showreel_state:hover {' +
+		'	.mds .mixlr_player .social_links .mixlr_download_showreel_state:hover {' +
 		'		background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAMAAAC6V+0/AAAA6lBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+Le70HAAAATXRSTlMAAQIDBQYHCQ8TFBUYGhwdHiAhIyQlJygpKi0xNTdBQkdKUFFVVlljZmlseH6Aj6Cipqitsre5vsXHyszOz9HT1dfZ2ubp7fHz9fn7/TY7Zi8AAADHSURBVBgZXcELO8JgAIbhZ1tFRYXImRxCy5nIKSSrtvf//x1f33bZ6r6JuY2W77caLimvHcqaXHgkSgP9+ypi1SJlhBWMwlAzfvLAnebcQFkZTwv7kkqcK9X14FA6oyvpujmW8eACu9Ijv9IVLI2kexdYnUhDxlIVKAe3DrAeShrxJj3ngEUH2IxkvHIp6SWHtR1pqsOWjPc8xo5iGzgDGf0C7Cn2Caxo6rt4oEQN41QzjrBOlHFMotJX4mOZVN3vBUHPX8P6A0whSSzOxThUAAAAAElFTkSuQmCC");' +
 		'	}' +
-		'	.mixlr_download_showreel .mixlr_player .social_links .mixlr_download_showreel_state.checked {' +
+		'	.mds .mixlr_player .social_links .mixlr_download_showreel_state.checked {' +
 		'		background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAMAAAC6V+0/AAAA6lBMVEUAAAAOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUG8FaoAAAATXRSTlMAAQIDBQYHCQ8TFBUYGhwdHiAhIyQlJygpKi0xNTdBQkdKUFFVVlljZmlseH6Aj6Cipqitsre5vsXHyszOz9HT1dfZ2ubp7fHz9fn7/TY7Zi8AAADHSURBVBgZXcELO8JgAIbhZ1tFRYXImRxCy5nIKSSrtvf//x1f33bZ6r6JuY2W77caLimvHcqaXHgkSgP9+ypi1SJlhBWMwlAzfvLAnebcQFkZTwv7kkqcK9X14FA6oyvpujmW8eACu9Ijv9IVLI2kexdYnUhDxlIVKAe3DrAeShrxJj3ngEUH2IxkvHIp6SWHtR1pqsOWjPc8xo5iGzgDGf0C7Cn2Caxo6rt4oEQN41QzjrBOlHFMotJX4mOZVN3vBUHPX8P6A0whSSzOxThUAAAAAElFTkSuQmCC");' +
+		'	}' +
+		'	#mds_list_links {' +
+		'		position: absolute;' +
+		'		right: 0px;' +
+		'		bottom: 0px;' +
+		'		cursor: pointer;' +
+		'		height: 20px;' +
+		'		color: rgb( 100,100,100 );' +
+		'	}' +
+		'	#mds_list_links_box {' +
+		'		position: relative;' +
+		'		top: -3px;' +
+		'		width: 100%;' +
+		'		border: 1px solid #ccc;' +
+		'		border-bottom-width: 0px;' +
+		'		height: 0px;' +
 		'	}' +
 		'</style>'
 	);
-	$( 'body' ).addClass( "mixlr_download_showreel" );
+	$( 'body' ).addClass( "mds" );
 }
 
 function addLinks() {
@@ -81,7 +97,65 @@ function updateSavedView() {
 }
 
 function addBottomNav() {
-	$( '.big_wrapper .pagination' ).first().insertAfter( $( ".showreel-list" ) );
+	$( '.big_wrapper .pagination' ).first().clone( true ).insertAfter( $( ".showreel-list" ) );
+}
+
+function getLinks( all ) {
+	console.log( "getLinks" )
+	console.log( "saved >>" )
+	console.log( saved )
+	var links = '';
+	for ( i = 0; i < broadcasts.length; i++ ) {
+		console.log( "id = "+ broadcasts[i].id )
+		if ( ! saved[ broadcasts[i].id ] || all ) {
+			console.log( "id not exist" )
+			links += broadcasts[i].streams.http.url +"\n";
+		}
+	}
+	return links || "All Links have already been downloaded";
+}
+
+function addLinksBox() {
+
+	var list_links_button = $( '<div id="mds_list_links">List Links</div>' );
+	$( "#title" ).append( list_links_button );
+
+	var list_links_box = $( '<textarea id="mds_list_links_box"></textarea>' );
+	$( "#title" ).append( list_links_box );
+
+	list_links_button
+		.css( "top", list_links_button.position().top )
+		.click(function(){
+			if ( $(this).hasClass( "expanded" ) ) {
+
+				$(this)
+					.removeClass( "expanded" )
+					.text( "List Links" );
+
+				$( '#title' ).animate({
+					"height": ""
+				});
+				list_links_box
+					.animate({
+						"height": "0px"
+					});
+			}
+			else {
+
+				$(this)
+					.addClass( "expanded" )
+					.text( "Hide Links" );
+
+				$( '#title' ).animate({
+					"height": ( $( '#title' ).outerHeight() + 100 ) + "px"
+				});
+				list_links_box
+					.text( getLinks() )
+					.animate({
+						"height": "100px"
+					});
+			}
+		});
 }
 
 var saved_local_key = 'mixlr_download_showreel_save_state';
@@ -98,7 +172,8 @@ var wait_for_mixlr_to_load_interval = setInterval(function(){
 		addLinks();
 		addTriggers();
 		updateSavedView();
-		addBottomNav()
+		addBottomNav();
+		addLinksBox();
 		clearInterval( wait_for_mixlr_to_load_interval );
 	}
 	if ( try_number++ > max_tries )
