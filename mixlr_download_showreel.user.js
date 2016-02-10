@@ -4,8 +4,8 @@
 // @description  Add links to download Showreel broadcasts on Mixlr.
 // @homepageURL  https://github.com/daraeman/mixlr_download_showreel
 // @author       daraeman
-// @version      1.3
-// @date         2016-02-03
+// @version      1.3.1
+// @date         2016-02-10
 // @include      /^https?:\/\/mixlr\.com\/\w+\/showreel\/*/
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js
 // @downloadURL  https://github.com/daraeman/mixlr_download_showreel/raw/master/mixlr_download_showreel.user.js
@@ -40,13 +40,22 @@ function addStyles() {
 		'	.mds .mixlr_player .social_links .mixlr_download_showreel_state.checked {' +
 		'		background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAMAAAC6V+0/AAAA6lBMVEUAAAAOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUOyRUG8FaoAAAATXRSTlMAAQIDBQYHCQ8TFBUYGhwdHiAhIyQlJygpKi0xNTdBQkdKUFFVVlljZmlseH6Aj6Cipqitsre5vsXHyszOz9HT1dfZ2ubp7fHz9fn7/TY7Zi8AAADHSURBVBgZXcELO8JgAIbhZ1tFRYXImRxCy5nIKSSrtvf//x1f33bZ6r6JuY2W77caLimvHcqaXHgkSgP9+ypi1SJlhBWMwlAzfvLAnebcQFkZTwv7kkqcK9X14FA6oyvpujmW8eACu9Ijv9IVLI2kexdYnUhDxlIVKAe3DrAeShrxJj3ngEUH2IxkvHIp6SWHtR1pqsOWjPc8xo5iGzgDGf0C7Cn2Caxo6rt4oEQN41QzjrBOlHFMotJX4mOZVN3vBUHPX8P6A0whSSzOxThUAAAAAElFTkSuQmCC");' +
 		'	}' +
-		'	#mds_list_links {' +
+		'	#mds_options {' +
 		'		position: absolute;' +
 		'		right: 0px;' +
 		'		bottom: 0px;' +
+		'		//height: 20px;' +
+		'	}' +
+		'	#mds_options > div {' +
 		'		cursor: pointer;' +
-		'		height: 20px;' +
-		'		color: rgb( 100,100,100 );' +
+		'		display: inline-block;' +
+		'		background: rgb( 200,200,200 );' +
+		'		color: rgb( 255,255,255 );' +
+		'		padding: 3px 11px 1px;' +
+		'		margin: 0px 2px;' +
+		'	}' +
+		'	#mds_options > div:last-child {' +
+		'		margin-right: 0px;' +
 		'	}' +
 		'	#mds_list_links_box {' +
 		'		position: relative;' +
@@ -74,15 +83,34 @@ function addTriggers() {
 	$( '.mixlr_player .social_links .mixlr_download_showreel_state' ).click(function(){
 		var el = $(this);
 		var id = el.parent().parent().parent().parent().attr( "data-broadcast_id" );
-		if ( el.hasClass( "checked" ) ) {
-			el.removeClass( "checked" );
-			delete saved[ id ];
-		}
-		else {
-			el.addClass( "checked" );
-			saved[ id ] = 1;
-		}
-		localStorage.setItem( saved_local_key, JSON.stringify( saved ) );
+		if ( el.hasClass( "checked" ) )
+			unmarkDownloaded( id, el );
+		else
+			markDownloaded( id, el );
+	});
+}
+
+function markDownloaded( id, el ) {
+	el.addClass( "checked" );
+	saved[ id ] = 1;
+	saveDataLocal();
+}
+
+function unmarkDownloaded( id, el ) {
+	el.removeClass( "checked" );
+	delete saved[ id ];
+	saveDataLocal();
+}
+
+function saveDataLocal() {
+	localStorage.setItem( saved_local_key, JSON.stringify( saved ) );
+}
+
+function markAllDownloaded() {
+	$( '.mixlr_player .social_links .mixlr_download_showreel_state' ).each(function(){
+		var el = $(this);
+		var id = el.parent().parent().parent().parent().attr( "data-broadcast_id" );
+		markDownloaded( id, el );
 	});
 }
 
@@ -109,16 +137,21 @@ function getLinks( all ) {
 	return links || "All Links have already been downloaded";
 }
 
-function addLinksBox() {
+function addOptionsBox() {
 
+	var list_options_box = $( '<div id="mds_options"></div>' );
 	var list_links_button = $( '<div id="mds_list_links">List Links</div>' );
-	$( "#title" ).append( list_links_button );
+	var mark_all_button = $( '<div id="mds_mark_all">Mark All Downloaded</div>' );
+	list_options_box.append( mark_all_button );
+	list_options_box.append( list_links_button );
+	$( "#title" ).append( list_options_box );
 
 	var list_links_box = $( '<textarea id="mds_list_links_box"></textarea>' );
 	$( "#title" ).append( list_links_box );
 
+	list_options_box.css( "top", list_options_box.position().top );
+
 	list_links_button
-		.css( "top", list_links_button.position().top )
 		.click(function(){
 			if ( $(this).hasClass( "expanded" ) ) {
 
@@ -150,6 +183,12 @@ function addLinksBox() {
 					});
 			}
 		});
+
+	mark_all_button
+		.click(function(){
+			if ( ! $(this).hasClass( "all_marked" ) )
+				markAllDownloaded();
+		});
 }
 
 var saved_local_key = 'mixlr_download_showreel_save_state';
@@ -167,7 +206,7 @@ var wait_for_mixlr_to_load_interval = setInterval(function(){
 		addTriggers();
 		updateSavedView();
 		addBottomNav();
-		addLinksBox();
+		addOptionsBox();
 		clearInterval( wait_for_mixlr_to_load_interval );
 	}
 	if ( try_number++ > max_tries )
