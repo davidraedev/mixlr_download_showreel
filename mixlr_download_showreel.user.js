@@ -4,7 +4,7 @@
 // @description  Add links to download Showreel broadcasts on Mixlr.
 // @homepageURL  https://github.com/daraeman/mixlr_download_showreel
 // @author       daraeman
-// @version      1.3.1
+// @version      1.4
 // @date         2016-02-10
 // @include      /^https?:\/\/mixlr\.com\/\w+\/showreel\/*/
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js
@@ -44,18 +44,21 @@ function addStyles() {
 		'		position: absolute;' +
 		'		right: 0px;' +
 		'		bottom: 0px;' +
-		'		//height: 20px;' +
 		'	}' +
 		'	#mds_options > div {' +
 		'		cursor: pointer;' +
 		'		display: inline-block;' +
-		'		background: rgb( 200,200,200 );' +
+		'		background: rgb( 190,190,190 );' +
 		'		color: rgb( 255,255,255 );' +
 		'		padding: 3px 11px 1px;' +
 		'		margin: 0px 2px;' +
 		'	}' +
 		'	#mds_options > div:last-child {' +
 		'		margin-right: 0px;' +
+		'	}' +
+		'	#mds_options.all_marked #mds_list_links {' +
+		'		pointer-events: none;' +
+		'		background: rgb( 220,220,220 );' +
 		'	}' +
 		'	#mds_list_links_box {' +
 		'		position: relative;' +
@@ -83,10 +86,20 @@ function addTriggers() {
 	$( '.mixlr_player .social_links .mixlr_download_showreel_state' ).click(function(){
 		var el = $(this);
 		var id = el.parent().parent().parent().parent().attr( "data-broadcast_id" );
-		if ( el.hasClass( "checked" ) )
+		if ( el.hasClass( "checked" ) ) {
 			unmarkDownloaded( id, el );
-		else
+			if ( ! allDownloadedCheck() )
+				unsetAllDownloadedFlag();
+		}
+		else {
 			markDownloaded( id, el );
+			if ( allDownloadedCheck() ) {
+				setAllDownloadedFlag();
+				hideLinksBox();
+				updateLinksBox();
+			}
+		}
+		updateLinksBox();
 	});
 }
 
@@ -112,6 +125,40 @@ function markAllDownloaded() {
 		var id = el.parent().parent().parent().parent().attr( "data-broadcast_id" );
 		markDownloaded( id, el );
 	});
+	setAllDownloadedFlag();
+	hideLinksBox();
+	updateLinksBox();
+}
+
+function unmarkAllDownloaded() {
+	$( '.mixlr_player .social_links .mixlr_download_showreel_state' ).each(function(){
+		var el = $(this);
+		var id = el.parent().parent().parent().parent().attr( "data-broadcast_id" );
+		unmarkDownloaded( id, el );
+	});
+	unsetAllDownloadedFlag();
+	updateLinksBox();
+}
+
+function setAllDownloadedFlag() {
+	$( '#mds_options' ).addClass( "all_marked" );
+	$( '#mds_mark_all' ).text( "Unmark All Downloaded" );
+}
+
+function unsetAllDownloadedFlag() {
+	$( '#mds_options' ).removeClass( "all_marked" );
+	$( '#mds_mark_all' ).text( "Mark All Downloaded" );
+}
+
+function allDownloadedCheck() {
+	var check = true;
+	$( '.mixlr_player .social_links .mixlr_download_showreel_state' ).each(function(){
+		if ( ! $(this).hasClass( "checked" ) ) {
+			check = false;
+			return false;
+		}
+	});
+	return check;
 }
 
 function updateSavedView() {
@@ -137,6 +184,10 @@ function getLinks( all ) {
 	return links || "All Links have already been downloaded";
 }
 
+function updateLinksBox() {
+	$( "#mds_list_links_box" ).text( getLinks() );
+}
+
 function addOptionsBox() {
 
 	var list_options_box = $( '<div id="mds_options"></div>' );
@@ -153,41 +204,46 @@ function addOptionsBox() {
 
 	list_links_button
 		.click(function(){
-			if ( $(this).hasClass( "expanded" ) ) {
-
-				$(this)
-					.removeClass( "expanded" )
-					.text( "List Links" );
-
-				$( '#title' ).animate({
-					"height": ""
-				});
-				list_links_box
-					.animate({
-						"height": "0px"
-					});
-			}
-			else {
-
-				$(this)
-					.addClass( "expanded" )
-					.text( "Hide Links" );
-
-				$( '#title' ).animate({
-					"height": ( $( '#title' ).outerHeight() + 100 ) + "px"
-				});
-				list_links_box
-					.text( getLinks() )
-					.animate({
-						"height": "100px"
-					});
-			}
+			if ( $(this).hasClass( "expanded" ) )
+				hideLinksBox();
+			else
+				showLinksBox();
 		});
 
 	mark_all_button
 		.click(function(){
-			if ( ! $(this).hasClass( "all_marked" ) )
+			if ( ! $(this).parent().hasClass( "all_marked" ) )
 				markAllDownloaded();
+			else
+				unmarkAllDownloaded();
+		});
+}
+
+function hideLinksBox() {
+	$( "#mds_list_links" )
+		.removeClass( "expanded" )
+		.text( "List Links" );
+
+	$( '#title' ).animate({
+		"height": ""
+	});
+	$( "#mds_list_links_box" )
+		.animate({
+			"height": "0px"
+		});
+}
+
+function showLinksBox() {
+	$( "#mds_list_links" )
+		.addClass( "expanded" )
+		.text( "Hide Links" );
+
+	$( '#title' ).animate({
+		"height": ( $( '#title' ).outerHeight() + 100 ) + "px"
+	});
+	$( "#mds_list_links_box" )
+		.animate({
+			"height": "100px"
 		});
 }
 
@@ -207,6 +263,10 @@ var wait_for_mixlr_to_load_interval = setInterval(function(){
 		updateSavedView();
 		addBottomNav();
 		addOptionsBox();
+		if ( allDownloadedCheck() )
+			setAllDownloadedFlag();
+		else
+			updateLinksBox();
 		clearInterval( wait_for_mixlr_to_load_interval );
 	}
 	if ( try_number++ > max_tries )
