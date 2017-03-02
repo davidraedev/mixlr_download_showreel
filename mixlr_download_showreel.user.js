@@ -4,9 +4,9 @@
 // @description  Add links to download Showreel broadcasts on Mixlr.
 // @homepageURL  https://github.com/daraeman/mixlr_download_showreel
 // @author       daraeman
-// @version      1.4
-// @date         2016-02-10
-// @include      /^https?:\/\/mixlr\.com\/\w+\/showreel\/*/
+// @version      1.5
+// @date         2017-03-01
+// @include      /^https?:\/\/mixlr\.com\/.*\/showreel\/*/
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js
 // @downloadURL  https://github.com/daraeman/mixlr_download_showreel/raw/master/mixlr_download_showreel.user.js
 // @updateURL    https://github.com/daraeman/mixlr_download_showreel/raw/master/mixlr_download_showreel.meta.js
